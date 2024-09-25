@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.title }} - Details</title>
+</head>
+<body>
+
+    <!-- Project Title -->
+    <h1>{{ project.title }}</h1>
+
+    <!-- Mark as Completed Button -->
+    <form method="POST" action="{% url 'mark_as_completed' project.id %}">
+        {% csrf_token %}
+        <button type="submit">Mark as Completed</button>
+    </form>
+
+    <!-- Form to Add a New Todo -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Todo</button>
+    </form>
+
+    <!-- Pending Tasks Section -->
+    <h2>Pending</h2>
+    <ul>
+        {% for todo in todos %}
+            {% if not todo.status %} <!-- If the todo is not completed (pending) -->
+                <li>
+                    <input type="checkbox"> <!-- Unchecked for pending -->
+                    {{ todo.description }} - {{ todo.created_at|date:"Y-m-d H:i" }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <!-- Completed Tasks Section -->
+    <h2>Completed</h2>
+    <ul>
+        {% for todo in todos %}
+            {% if todo.status %} <!-- If the todo is completed -->
+                <li>
+                    <input type="checkbox" checked> <!-- Checked for completed -->
+                    {{ todo.description }} - {{ todo.created_at|date:"Y-m-d H:i" }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <!-- Link to Export the Project Summary -->
+    <a href="{% url 'export_project_summary' project.id %}">Export as Gist</a>
+
+</body>
+</html>
